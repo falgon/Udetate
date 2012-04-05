@@ -46,34 +46,34 @@ void Rank(std::chrono::seconds s,menu& m)
 	
 	unsigned int second=static_cast<unsigned int>(s.count());
 	bool new_lecord_flag=false;
-	std::vector<std::string> ranking;
+	std::vector<unsigned int> v; 
 	unsigned int rank_new=0;
 
-	std::copy(std::istream_iterator<std::string>(ifs),
-				std::istream_iterator<std::string>(),
-				std::back_inserter(ranking));
+	std::copy(std::istream_iterator<int>(ifs),
+				std::istream_iterator<int>(),
+				std::back_inserter(v));
+
 	ifs.close();
 
-	if(ranking.end()!=std::upper_bound(ranking.begin(),ranking.end(),boost::lexical_cast<std::string>(second))&&
-		!std::binary_search(ranking.begin(),ranking.end(),boost::lexical_cast<std::string>(second)))
+	if(v.end()!=std::upper_bound(v.begin(),v.end(),second)&&
+		!std::binary_search(v.begin(),v.end(),second))
 		new_lecord_flag=true;
 
-
 	if(new_lecord_flag){
-		ranking.push_back(boost::lexical_cast<std::string>(second));
-		std::sort(ranking.begin(),ranking.end());
+		v.push_back(second);
+		std::sort(v.begin(),v.end());
 
 		std::ofstream ofs("data/rank.dat");
 		if(!ofs.is_open())assert(0);
-		for(unsigned int i=0; i<ranking.size()-1; ++i)
-			ofs<<ranking[i]<<std::endl;
+		for(unsigned int i=0; i<v.size()-1; ++i)
+			ofs<<v[i]<<std::endl;
 		ofs.close();
-		rank_new=std::lower_bound(ranking.begin(),ranking.end(),boost::lexical_cast<std::string>(second))-ranking.begin()+1;
+		rank_new=std::lower_bound(v.begin(),v.end(),second)-v.begin()+1;
 	}
 
 	int x=0,y=0;
-	unsigned int Green=GetColor(255,255,0);
-	unsigned int Red=GetColor(204,51,0);
+	const unsigned int Green=GetColor(255,255,0);
+	const unsigned int Red=GetColor(204,51,0);
 
 	while(!ScreenFlip()&&!ProcessMessage()&&!ClearDrawScreen()){
 		m.effectiving();
@@ -82,27 +82,27 @@ void Rank(std::chrono::seconds s,menu& m)
 
 		if(new_lecord_flag){
 			unsigned int c=1;
-			for(unsigned int i=0; i<ranking.size()*80-10; i+=80,++c){
+			for(unsigned int i=0; i<v.size()*80-10; i+=80,++c){
 				if(rank_new&&c==rank_new)
 					DrawStringToHandle(x,y+i,
 						(boost::lexical_cast<std::string>(c)+
 						std::string("ˆÊ ")+
-						ranking[i/80]).c_str(),
+						boost::lexical_cast<std::string>(v[i/80])).c_str(),
 					Red,m.font_Handle[0]);
 				else
 					DrawStringToHandle(x,y+i,
 						(boost::lexical_cast<std::string>(c)+
 						std::string("ˆÊ ")+
-						ranking[i/80]).c_str(),
+						boost::lexical_cast<std::string>(v[i/80])).c_str(),
 					Green,m.font_Handle[0]);
 			}
 		}else{
 			unsigned int c=1;
-			for(unsigned int i=0; i<ranking.size()*80-10; i+=80,++c)
+			for(unsigned int i=0; i<v.size()*80-10; i+=80,++c)
 				DrawStringToHandle(x,y+i,
 						(boost::lexical_cast<std::string>(c)+
 						std::string("ˆÊ ")+
-						ranking[i/80]).c_str(),
+						boost::lexical_cast<std::string>(v[i/80])).c_str(),
 					Green,m.font_Handle[0]);
 		}
 	}
