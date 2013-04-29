@@ -20,7 +20,7 @@ public:
 		:menu_string_color(0),select_m(0),Picture_Handle(0)
 	{}
 	~menu_core()
-	{}// Don't using new
+	{}// Don't use new
 	virtual int Drow_menus()=0;
 	virtual void Draw_bars()=0;
 	virtual void effectiving()=0;
